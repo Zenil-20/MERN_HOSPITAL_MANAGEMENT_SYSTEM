@@ -574,3 +574,9 @@ input[type="time"]:before {
   color: #444;
   margin-right: 0.5em;
 }
+.delete-icon {
+  cursor: pointer;
+  color: red;
+  font-size: 1.5rem;
+}
+
