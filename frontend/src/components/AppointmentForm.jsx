@@ -1,6 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const AppointmentForm = () => {
@@ -12,11 +11,14 @@ const AppointmentForm = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
   const [department, setDepartment] = useState("Pediatrics");
   const [doctorFirstName, setDoctorFirstName] = useState("");
   const [doctorLastName, setDoctorLastName] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
+
+  const [appointments, setAppointments] = useState([]);
 
   const departmentsArray = [
     "Pediatrics",
@@ -31,6 +33,7 @@ const AppointmentForm = () => {
   ];
 
   const [doctors, setDoctors] = useState([]);
+
   useEffect(() => {
     const fetchDoctors = async () => {
       const { data } = await axios.get(
@@ -38,10 +41,31 @@ const AppointmentForm = () => {
         { withCredentials: true }
       );
       setDoctors(data.doctors);
-      console.log(data.doctors);
     };
     fetchDoctors();
   }, []);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (appointmentDate && department && doctorFirstName && doctorLastName) {
+        const { data } = await axios.get(
+          "http://localhost:9845/api/v1/appointment",
+          {
+            params: {
+              appointment_date: appointmentDate,
+              department,
+              doctor_firstName: doctorFirstName,
+              doctor_lastName: doctorLastName,
+            },
+            withCredentials: true,
+          }
+        );
+        setAppointments(data.appointments);
+      }
+    };
+    fetchAppointments();
+  }, [appointmentDate, department, doctorFirstName, doctorLastName]);
+
   const handleAppointment = async (e) => {
     e.preventDefault();
     try {
@@ -57,6 +81,7 @@ const AppointmentForm = () => {
           dob,
           gender,
           appointment_date: appointmentDate,
+          select_time: appointmentTime,
           department,
           doctor_firstName: doctorFirstName,
           doctor_lastName: doctorLastName,
@@ -77,14 +102,33 @@ const AppointmentForm = () => {
         setDob(""),
         setGender(""),
         setAppointmentDate(""),
-        setDepartment(""),
+        setAppointmentTime(""),
+        setDepartment("Pediatrics"),
         setDoctorFirstName(""),
         setDoctorLastName(""),
-        setHasVisited(""),
+        setHasVisited(false),
         setAddress("");
     } catch (error) {
       toast.error(error.response.data.message);
     }
+  };
+
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 9; hour <= 16; hour++) {
+      for (let min = 0; min < 60; min += 30) {
+        const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
+        const minStr = min < 10 ? `0${min}` : `${min}`;
+        slots.push(`${hourStr}:${minStr}`);
+      }
+    }
+    return slots;
+  };
+
+  const isTimeSlotAvailable = (time) => {
+    return !appointments.some(
+      (appointment) => appointment.select_time === time
+    );
   };
 
   return (
@@ -146,6 +190,21 @@ const AppointmentForm = () => {
               value={appointmentDate}
               onChange={(e) => setAppointmentDate(e.target.value)}
             />
+            <select
+              value={appointmentTime}
+              onChange={(e) => setAppointmentTime(e.target.value)}
+            >
+              <option value="">Select Time</option>
+              {generateTimeSlots().map((time, index) => (
+                <option
+                  value={time}
+                  key={index}
+                  disabled={!isTimeSlotAvailable(time)}
+                >
+                  {time}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <select
