@@ -7,7 +7,7 @@
   font-family: "Montserrat", sans-serif;
 }
 body {
-  background: #e5e5e5;
+  background-color: #e5e5e5;
 }
 .btn {
   padding: 7px 20px;
@@ -84,7 +84,7 @@ h6 {
 }
 .hero .banner h1,
 .hero .banner p {
-  max-width: 650px;
+  max-width: 550px;
 }
 .hero .banner h1 {
   letter-spacing: 2px;
@@ -359,6 +359,41 @@ footer .content div:last-child div {
 footer .content div:last-child div svg {
   font-size: 24px;
 }
+footer .contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+footer .contact-details div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+footer .contact-details div svg {
+  font-size: 24px;
+}
+
+footer .map-container {
+  margin-top: 10px;
+}
+.footer-bottom {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+}
+.google-map {
+  width: 100%;
+  height: 200px;
+  border: none;
+}
+
+.heart {
+  color: red;
+}
 @media (max-width: 1135px) {
   footer .content {
     flex-wrap: wrap;
@@ -451,25 +486,32 @@ nav .logo {
   display: flex;
   align-items: center;
   font-size: 2rem;
+  margin-left: 5px;
 }
 nav .navLinks {
   flex: 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+  gap: 20px;
 }
 nav .navLinks {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 100px;
 }
 nav .navLinks .links {
   display: flex;
-  gap: 25px;
+  gap: 20px;
+  align-items: center;
 }
 nav .navLinks .links a {
   text-decoration: none;
   color: #222;
   font-size: 20px;
   font-weight: 600;
-  letter-spacing: 1.4px;
+  letter-spacing: 2px;
 }
 nav .navLinks .links a:hover {
   color: #000;
@@ -624,5 +666,45 @@ footer .email-container {
   align-items: center;
   gap: 10px;
 }
+
+/* AppointmentStatus.css */
+
+.appointment-status-container {
+  margin: 90px;
+}
+
+.appointment-status-header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.appointment-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.appointment-table th,
+.appointment-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.appointment-table th {
+  background-color: #f2f2f2;
+}
+
+.appointment-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.appointment-table tr:hover {
+  background-color: #ddd;
+}
+
+
+
 
 

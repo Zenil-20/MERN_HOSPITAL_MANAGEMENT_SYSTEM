@@ -9,17 +9,17 @@ const Footer = () => {
     {
       id: 1,
       day: "Monday",
-      time: "9:00 AM - 11:00 PM",
+      time: "9:00 AM - 4:30 PM",
     },
     {
       id: 2,
       day: "Tuesday",
-      time: "12:00 PM - 12:00 AM",
+      time: "9:00 AM - 4:30 PM",
     },
     {
       id: 3,
       day: "Wednesday",
-      time: "10:00 AM - 10:00 PM",
+      time: "9:00 AM - 4:30 PM",
     },
     {
       id: 4,
@@ -29,12 +29,12 @@ const Footer = () => {
     {
       id: 5,
       day: "Friday",
-      time: "3:00 PM - 9:00 PM",
+      time: "9:00 AM - 4:30 PM",
     },
     {
       id: 6,
       day: "Saturday",
-      time: "9:00 AM - 3:00 PM",
+      time: "9:00 AM - 4:30 PM",
     },
   ];
 
@@ -79,12 +79,13 @@ const Footer = () => {
               <FaLocationArrow />
               <span> Gujarat, India</span>
             </div>
-            <div>
+            <div className="map-container">
               <iframe
-                width="320"
+                /*width="320"
                 height="200"
                 frameBorder="0"
-                style={{ border: "none", overflow: "hidden" }}
+                style={{ border: "none", overflow: "hidden" }}*/
+                className="google-map"
                 src="https://maps.google.com/maps?width=320&amp;height=200&amp;hl=en&amp;q=Falcon%20solution%20462-463%20The%20Galleria,%20near%20Sanjiv%20Kumar%20Auditorium,%20Pal%20Gam,%20Surat,%20Gujarat%20395009+(Zeecare%20Hospital)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
                 title="Zeecare Hospital Location"
                 allowFullScreen
@@ -108,6 +109,9 @@ const Footer = () => {
               </a>
             </div>
           </div>
+        </div>
+        <div className="footer-bottom">
+        &copy; 2024 Made with love by Falcon Solution <span className="heart">❤️</span>
         </div>
       </footer>
     </>

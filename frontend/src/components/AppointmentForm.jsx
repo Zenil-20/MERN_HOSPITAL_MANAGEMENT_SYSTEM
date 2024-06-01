@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { toast } from "react-toastify";
+import { Context } from "../main";
 
 const AppointmentForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -19,6 +20,7 @@ const AppointmentForm = () => {
   const [hasVisited, setHasVisited] = useState(false);
 
   const [appointments, setAppointments] = useState([]);
+  const { user } = useContext(Context);
 
   const departmentsArray = [
     "Pediatrics",
@@ -68,6 +70,12 @@ const AppointmentForm = () => {
 
   const handleAppointment = async (e) => {
     e.preventDefault();
+
+    if (email !== user.email) { // Compare entered email with logged-in user's email
+      toast.error("Logged in email and Entered Email not verified");
+      return;
+    }
+
     try {
       const hasVisitedBool = Boolean(hasVisited);
       const { data } = await axios.post(
@@ -153,7 +161,7 @@ const AppointmentForm = () => {
           <div>
             <input
               type="text"
-              placeholder="Email"
+              placeholder="Confirm Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
