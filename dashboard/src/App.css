@@ -579,4 +579,33 @@ input[type="time"]:before {
   color: red;
   font-size: 1.5rem;
 }
+.doctors .banner .card {
+  position: relative; 
+}
+.delete-doctors {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 1.5rem;
+  z-index: 1; 
+  transition: color 0.3s ease;
+}
+.delete-doctors:hover {
+  color: #c0392b; /* Darker red on hover */
+}
+.banner .card {
+  transition: transform 0.3s ease; /* Adding transition for smooth effect */
+}
+
+.banner .card:hover {
+  transform: translateY(-8px); /* Move the card up slightly on hover */
+}
+
+
+
+
+
+
 

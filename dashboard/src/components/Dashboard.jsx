@@ -20,9 +20,18 @@ const Dashboard = () => {
           "http://localhost:9845/api/v1/appointment/getall",
           { withCredentials: true }
         );
-        setAppointments(data.appointments);
+
+        // Sort appointments by date and time before setting the state
+        const sortedAppointments = data.appointments.sort((a, b) => {
+          const dateA = new Date(a.appointment_date + "T" + a.select_time);
+          const dateB = new Date(b.appointment_date + "T" + b.select_time);
+          return dateA - dateB;
+        });
+
+        setAppointments(sortedAppointments);
       } catch (error) {
-        setAppointments([]);
+        console.error("Error fetching appointments:", error);
+        setAppointments([]); // Ensure this line is properly placed inside the catch block
       }
     };
 
@@ -103,106 +112,102 @@ const Dashboard = () => {
   }
 
   return (
-    <>
-      <section className="dashboard page">
-        <div className="banner">
-          <div className="firstBox">
-            <img src="/doc.png" alt="docImg" />
-            <div className="content">
-              <div>
-                <p>Hello ,</p>
-                <h5>{admin && `${admin.firstName} ${admin.lastName}`}</h5>
-              </div>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Facilis, nam molestias. Eaque molestiae ipsam commodi neque.
-                Assumenda repellendus necessitatibus itaque.
-              </p>
+    <section className="dashboard page">
+      <div className="banner">
+        <div className="firstBox">
+          <img src="/doc.png" alt="docImg" />
+          <div className="content">
+            <div>
+              <p>Hello ,</p>
+              <h5>{admin && `${admin.firstName} ${admin.lastName}`}</h5>
             </div>
-          </div>
-          <div className="secondBox">
-            <p>Total Appointments</p>
-            <h3>{totalAppointments}</h3>
-          </div>
-          <div className="thirdBox">
-            <p>Registered Doctors</p>
-            <h3>{registeredDoctors}</h3>
+            <p>
+              Welcome to the control center of our hospital management system. Your role is crucial in ensuring smooth operations and optimal patient care. Here, you have the tools and capabilities to manage various aspects of the hospital's functions effectively.
+            </p>
           </div>
         </div>
-        <div className="banner">
-          <h5>Appointments</h5>
-          <table>
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Doctor</th>
-                <th>Department</th>
-                <th>Status</th>
-                <th>Visited</th>
-                <th>Delete</th> {/* Added */}
-              </tr>
-            </thead>
-            <tbody>
-              {appointments && appointments.length > 0 ? (
-                appointments.map((appointment) => (
-                  <tr key={appointment._id}>
-                    <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
-                    <td>{appointment.appointment_date.substring(0, 10)}</td>
-                    <td>{appointment.select_time}</td>
-                    <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
-                    <td>{appointment.department}</td>
-                    <td>
-                      <select
-                        className={
-                          appointment.status === "Pending"
-                            ? "value-pending"
-                            : appointment.status === "Accepted"
+        <div className="secondBox">
+          <p>Total Appointments</p>
+          <h3>{totalAppointments}</h3>
+        </div>
+        <div className="thirdBox">
+          <p>Registered Doctors</p>
+          <h3>{registeredDoctors}</h3>
+        </div>
+      </div>
+      <div className="banner">
+        <h5>Appointments</h5>
+        <table>
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Doctor</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Visited</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {appointments && appointments.length > 0 ? (
+              appointments.map((appointment) => (
+                <tr key={appointment._id}>
+                  <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
+                  <td>{appointment.appointment_date.substring(0, 10)}</td>
+                  <td>{appointment.select_time}</td>
+                  <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
+                  <td>{appointment.department}</td>
+                  <td>
+                    <select
+                      className={
+                        appointment.status === "Pending"
+                          ? "value-pending"
+                          : appointment.status === "Accepted"
                             ? "value-accepted"
                             : "value-rejected"
-                        }
-                        value={appointment.status}
-                        onChange={(e) =>
-                          handleUpdateStatus(appointment._id, e.target.value)
-                        }
-                      >
-                        <option value="Pending" className="value-pending">
-                          Pending
-                        </option>
-                        <option value="Accepted" className="value-accepted">
-                          Accepted
-                        </option>
-                        <option value="Rejected" className="value-rejected">
-                          Rejected
-                        </option>
-                      </select>
-                    </td>
-                    <td>
-                      {appointment.hasVisited ? (
-                        <GoCheckCircleFill className="green" />
-                      ) : (
-                        <AiFillCloseCircle className="red" />
-                      )}
-                    </td>
-                    <td>
-                      <MdDeleteForever
-                        className="delete-icon"
-                        onClick={() => handleDeleteAppointment(appointment._id)}
-                      />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8">No Appointments Found!</td>
+                      }
+                      value={appointment.status}
+                      onChange={(e) =>
+                        handleUpdateStatus(appointment._id, e.target.value)
+                      }
+                    >
+                      <option value="Pending" className="value-pending">
+                        Pending
+                      </option>
+                      <option value="Accepted" className="value-accepted">
+                        Accepted
+                      </option>
+                      <option value="Rejected" className="value-rejected">
+                        Rejected
+                      </option>
+                    </select>
+                  </td>
+                  <td>
+                    {appointment.hasVisited ? (
+                      <GoCheckCircleFill className="green" />
+                    ) : (
+                      <AiFillCloseCircle className="red" />
+                    )}
+                  </td>
+                  <td>
+                    <MdDeleteForever
+                      className="delete-icon"
+                      onClick={() => handleDeleteAppointment(appointment._id)}
+                    />
+                  </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8">No Appointments Found!</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 };
 
