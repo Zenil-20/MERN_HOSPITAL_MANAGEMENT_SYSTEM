@@ -191,3 +191,29 @@ export const addNewDoctor = catchAsyncErrors(async(req,res,next)=>{
         doctor,
     });
 });
+
+
+
+
+export const deleteDoctor = catchAsyncErrors(async (req, res, next) => {
+    const { id } = req.params;
+
+    // Check if the doctor exists
+    const doctor = await User.findById(id);
+    if (!doctor) {
+        return next(new ErrorHandler('Doctor not found!', 404));
+    }
+
+    // Check if the user to be deleted is a doctor
+    if (doctor.role !== 'Doctor') {
+        return next(new ErrorHandler('The user is not a doctor!', 400));
+    }
+
+    // Delete the doctor from the database
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({
+        success: true,
+        message: 'Doctor deleted successfully!',
+    });
+});

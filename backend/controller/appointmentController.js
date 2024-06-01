@@ -40,6 +40,18 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler('Please Fill Full Form', 400));
   }
 
+    // Check if the appointment date is a Sunday
+    const appointmentDate = new Date(appointment_date);
+    if (appointmentDate.getUTCDay() === 0) {
+      return next(new ErrorHandler('It is a non-working day', 400));
+    }
+    
+    // Check if the appointment date is in the future
+  const currentDate = new Date();
+  if (appointmentDate <= currentDate) {
+    return next(new ErrorHandler('Select appropriate appointment date', 400));
+  }
+
   // Check if the selected time slot is already taken
   const existingAppointment = await Appointment.findOne({
     appointment_date,
@@ -131,6 +143,30 @@ export const deleteAppointment = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: 'Appointment Deleted!',
+  });
+});
+
+// Function to get appointment status for authenticated patient
+export const getAppointmentStatus = catchAsyncErrors(async (req, res, next) => {
+  const userEmail = req.user.email;
+
+  const appointments = await Appointment.find({ email: userEmail });
+
+  const appointmentStatus = appointments.map(appointment => ({
+    _id: appointment._id,
+    appointment_date: appointment.appointment_date,
+    select_time: appointment.select_time,
+    department: appointment.department,
+    doctor: {
+      firstName: appointment.doctor.firstName,
+      lastName: appointment.doctor.lastName
+    },
+    status: appointment.status
+  }));
+
+  res.status(200).json({
+    success: true,
+    appointmentStatus
   });
 });
 
