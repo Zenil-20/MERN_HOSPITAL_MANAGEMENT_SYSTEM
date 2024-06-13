@@ -37,19 +37,19 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
     !address ||
     !select_time
   ) {
-    return next(new ErrorHandler('Please Fill Full Form', 400));
+    return next(new ErrorHandler('Please fill the complete form', 400));
   }
 
-    // Check if the appointment date is a Sunday
-    const appointmentDate = new Date(appointment_date);
-    if (appointmentDate.getUTCDay() === 0) {
-      return next(new ErrorHandler('It is a non-working day', 400));
-    }
+  // Check if the appointment date is a Sunday
+  const appointmentDate = new Date(appointment_date);
+  if (appointmentDate.getUTCDay() === 0) {
+    return next(new ErrorHandler('Appointments cannot be scheduled on Sundays', 400));
+  }
     
-    // Check if the appointment date is in the future
+  // Check if the appointment date is in the future
   const currentDate = new Date();
   if (appointmentDate <= currentDate) {
-    return next(new ErrorHandler('Select appropriate appointment date', 400));
+    return next(new ErrorHandler('Please select an appropriate appointment date', 400));
   }
 
   // Check if the selected time slot is already taken
@@ -63,9 +63,8 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
   });
 
   if (existingAppointment) {
-    return next(new ErrorHandler('Time slot already taken', 400));
+    return next(new ErrorHandler('The selected time slot is already taken', 400));
   }
-  /*********************************************************** */
 
   const doctor = await User.findOne({
     firstName: doctor_firstName,
@@ -75,7 +74,7 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
   });
 
   if (!doctor) {
-    return next(new ErrorHandler('Doctor Not Found', 404));
+    return next(new ErrorHandler('Doctor not found', 404));
   }
 
   const patientId = req.user._id;
@@ -102,24 +101,28 @@ export const postAppointment = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: 'Appointment Sent Successfully!',
+    message: 'Appointment successfully scheduled!',
     appointment,
   });
 });
 
 export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
-  const appointments = await Appointment.find();
-  res.status(200).json({
-    success: true,
-    appointments,
-  });
+  try {
+    const appointments = await Appointment.find();
+    res.status(200).json({
+      success: true,
+      appointments,
+    });
+  } catch (error) {
+    next(new ErrorHandler('Unable to fetch appointments', 500));
+  }
 });
 
 export const updateAppointmentStatus = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
   let appointment = await Appointment.findById(id);
   if (!appointment) {
-    return next(new ErrorHandler('Appointment Not Found!', 404));
+    return next(new ErrorHandler('Appointment not found', 404));
   }
   appointment = await Appointment.findByIdAndUpdate(id, req.body, {
     new: true,
@@ -128,25 +131,24 @@ export const updateAppointmentStatus = catchAsyncErrors(async (req, res, next) =
   });
   res.status(200).json({
     success: true,
-    message: 'Appointment Status Updated',
+    message: 'Appointment status updated',
     appointment,
   });
 });
 
 export const deleteAppointment = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.params;
-  let appointment = await Appointment.findById(id);
+  const appointment = await Appointment.findById(id);
   if (!appointment) {
-    return next(new ErrorHandler('Appointment Not Found!', 404));
+    return next(new ErrorHandler('Appointment not found', 404));
   }
   await appointment.deleteOne();
   res.status(200).json({
     success: true,
-    message: 'Appointment Deleted!',
+    message: 'Appointment deleted',
   });
 });
 
-// Function to get appointment status for authenticated patient
 export const getAppointmentStatus = catchAsyncErrors(async (req, res, next) => {
   const userEmail = req.user.email;
 
@@ -177,5 +179,24 @@ export const getstats = catchAsyncErrors(async (req, res, next) => {
     success: true,
     appointmentCount,
     doctorCount,
+  });
+});
+
+export const getBookedTimes = catchAsyncErrors(async (req, res, next) => {
+  const { appointment_date, department, doctor_firstName, doctor_lastName } = req.query;
+
+  const appointments = await Appointment.find({
+    appointment_date,
+    department,
+    'doctor.firstName': doctor_firstName,
+    'doctor.lastName': doctor_lastName,
+    status: { $ne: 'Rejected' }
+  }).select('select_time');
+
+  const bookedTimes = appointments.map(appointment => appointment.select_time);
+
+  res.status(200).json({
+    success: true,
+    bookedTimes,
   });
 });
