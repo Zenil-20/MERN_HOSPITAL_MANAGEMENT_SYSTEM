@@ -1,6 +1,6 @@
 import express from "express";
-import { addNewAdmin, addNewDoctor, getAllDoctors, getUserDetails, login, logoutAdmin, logoutPatient, patientRegister, deleteDoctor } from "../controller/userController.js";
-import { isAdminAuthenticated, isPatientAuthenticated} from "../middlewares/auth.js";
+import { addNewAdmin, addNewDoctor, getAllDoctors, getUserDetails, login, logoutAdmin, logoutPatient, patientRegister, deleteDoctor, updateDoctor } from "../controller/userController.js";
+import { isAdminAuthenticated, isPatientAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -14,5 +14,6 @@ router.get("/admin/logout", isAdminAuthenticated, logoutAdmin);
 router.get("/patient/logout", isPatientAuthenticated, logoutPatient);
 router.post("/doctor/addnew", isAdminAuthenticated, addNewDoctor);
 router.delete("/doctors/:id", isAdminAuthenticated, deleteDoctor);
+router.put("/doctors/:id", isAdminAuthenticated, updateDoctor);
 
 export default router;
