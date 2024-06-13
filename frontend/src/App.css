@@ -704,6 +704,48 @@ footer .email-container {
   background-color: #ddd;
 }
 
+/* Add blur effect to appointment form */
+/* Blurred overlay to cover the form */
+.appointment-form.blur {
+  filter: blur(4px); /* Adjust blur intensity as needed */
+}
+
+/* Center the login/register button within the blurred form */
+.blur-overlay {
+  position: relative; /* Change position to relative */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.blur-overlay button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color:#5b41df;; /* Change button color as needed */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.blur-overlay button:hover {
+  background-color: #0056b3; /* Change button hover color as needed */
+}
+
+.txt {
+  margin-bottom: 10px; /* Adjust as needed for spacing */
+}
+
+
+
+
+
+
+
+
+
 
 
 
