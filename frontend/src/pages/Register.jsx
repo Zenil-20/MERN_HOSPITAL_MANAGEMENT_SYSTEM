@@ -15,34 +15,46 @@ const Register = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigateTo = useNavigate();
 
   const handleRegistration = async (e) => {
     e.preventDefault();
+
+    // Form validation
+    if (!firstName || !lastName || !email || !phone || !nic || !dob || !gender || !password || !confirmPassword) {
+      toast.error("Please fill the full form.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
     try {
-      await axios
-        .post(
-          "http://localhost:9845/api/v1/user/patient/register",
-          { firstName, lastName, email, phone, nic, dob, gender, password },
-          {
-            withCredentials: true,
-            headers: { "Content-Type": "application/json" },
-          }
-        )
-        .then((res) => {
-          toast.success(res.data.message);
-          setIsAuthenticated(true);
-          navigateTo("/");
-          setFirstName("");
-          setLastName("");
-          setEmail("");
-          setPhone("");
-          setNic("");
-          setDob("");
-          setGender("");
-          setPassword("");
-        });
+      await axios.post(
+        "http://localhost:9845/api/v1/user/patient/register",
+        { firstName, lastName, email, phone, nic, dob, gender, password },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
+      ).then((res) => {
+        toast.success(res.data.message);
+        setIsAuthenticated(true);
+        navigateTo("/");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setNic("");
+        setDob("");
+        setGender("");
+        setPassword("");
+        setConfirmPassword("");
+      });
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -115,6 +127,12 @@ const Register = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
           <div

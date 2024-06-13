@@ -18,7 +18,6 @@ const AppointmentForm = () => {
   const [doctorLastName, setDoctorLastName] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
-  const [appointments, setAppointments] = useState([]);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const { user, isAuthenticated } = useContext(Context);
 
@@ -48,10 +47,10 @@ const AppointmentForm = () => {
   }, []);
 
   useEffect(() => {
-    const fetchBookedAppointments = async () => {
+    const fetchBookedTimes = async () => {
       if (appointmentDate && department && doctorFirstName && doctorLastName) {
         const { data } = await axios.get(
-          "http://localhost:9845/api/v1/appointment",
+          "http://localhost:9845/api/v1/appointment/booked-times",
           {
             params: {
               appointment_date: appointmentDate,
@@ -62,15 +61,28 @@ const AppointmentForm = () => {
             withCredentials: true,
           }
         );
-        setAppointments(data.appointments);
+        setAvailableTimeSlots(generateTimeSlots(data.bookedTimes));
       }
     };
-    fetchBookedAppointments();
+    fetchBookedTimes();
   }, [appointmentDate, department, doctorFirstName, doctorLastName]);
 
   useEffect(() => {
-    setAvailableTimeSlots(generateTimeSlots(appointments));
-  }, [appointments]);
+    if (isAuthenticated && user) {
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setNic(user.nic || "");
+      setDob(formatDate(user.dob || ""));
+      setGender(user.gender || "");
+    }
+  }, [isAuthenticated, user]);
+
+  const formatDate = (dateStr) => {
+    const [day, month, year] = dateStr.split("-");
+    return `${year}-${month}-${day}`;
+  };
 
   const handleAppointment = async (e) => {
     e.preventDefault();
@@ -129,30 +141,20 @@ const AppointmentForm = () => {
     setAddress("");
   };
 
-  const generateTimeSlots = (bookedAppointments) => {
+  const generateTimeSlots = (bookedTimes) => {
     const slots = [];
     for (let hour = 9; hour <= 16; hour++) {
       for (let min = 0; min < 60; min += 30) {
         const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
         const minStr = min < 10 ? `0${min}` : `${min}`;
         const time = `${hourStr}:${minStr}`;
-        const isAvailable = !bookedAppointments.some(appointment =>
-          appointment.select_time === time && 
-          appointment.department === department && 
-          appointment.doctor_firstName === doctorFirstName && 
-          appointment.doctor_lastName === doctorLastName && 
-          appointment.appointment_date === appointmentDate && 
-          appointment.status === 'Accepted' // Check for accepted appointments
-        );
-        if (isAvailable) {
+        if (!bookedTimes.includes(time)) {
           slots.push(time);
         }
       }
     }
     return slots;
   };
-  
-  
 
   const handleLoginRegister = () => {
     window.location.href = "/login"; // Change to your login/register route
@@ -162,7 +164,12 @@ const AppointmentForm = () => {
     <>
       {!isAuthenticated && (
         <div className="blur-overlay">
-          <button onClick={handleLoginRegister}>Login/Register</button>
+          <div className="login-message">
+          <h2>Please Login to Book an Appointment</h2>
+          <button onClick={handleLoginRegister}>
+            Login/Register
+            </button>
+            </div>
         </div>
       )}
       <div className={`container form-component appointment-form ${!isAuthenticated ? 'blur' : ''}`}>

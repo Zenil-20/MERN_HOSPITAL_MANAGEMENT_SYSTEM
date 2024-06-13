@@ -707,7 +707,7 @@ footer .email-container {
 /* Add blur effect to appointment form */
 /* Blurred overlay to cover the form */
 .appointment-form.blur {
-  filter: blur(4px); /* Adjust blur intensity as needed */
+  filter: blur(3px); /* Adjust blur intensity as needed */
 }
 
 /* Center the login/register button within the blurred form */
@@ -737,6 +737,54 @@ footer .email-container {
 .txt {
   margin-bottom: 10px; /* Adjust as needed for spacing */
 }
+
+/* rough */
+.login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.login-message {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-message h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+.login-btn {
+  background-color: #9083d5;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #7a6bc1;
+}
+
+.blur {
+  filter: blur(5px);
+}
+
 
 
 
