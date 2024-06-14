@@ -1,7 +1,8 @@
 // src/pages/AppointmentStatus.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify'; 
+import { toast } from 'react-toastify';
+import { Oval } from 'react-loader-spinner';
 
 const AppointmentStatus = () => {
   const [appointments, setAppointments] = useState([]);
@@ -33,7 +34,20 @@ const AppointmentStatus = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loader-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Oval
+          height={80}
+          width={80}
+          color="#4fa94d"
+          visible={true}
+          ariaLabel='oval-loading'
+          secondaryColor="#4fa94d"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />
+      </div>
+    );
   }
 
   return (
